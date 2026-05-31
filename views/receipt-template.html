@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>House Rent Receipt</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+
+    .receipt-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 40px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .receipt-header h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .receipt-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .receipt-number {
+      text-align: right;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 14px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-row.total {
+      font-weight: bold;
+      border-bottom: 2px solid #333;
+      margin-top: 10px;
+    }
+
+    .info-label {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .info-value {
+      flex: 1;
+      text-align: right;
+    }
+
+    .occupant-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .info-block {
+      flex: 1;
+    }
+
+    .info-block-label {
+      font-weight: bold;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .info-block-value {
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .charges-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+
+    .charges-table th {
+      background-color: #f9f9f9;
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .charges-table td {
+      padding: 10px;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .charges-table tr:last-child td {
+      border-bottom: 2px solid #333;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+
+    .signature-section {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      padding-top: 20px;
+    }
+
+    .signature-block {
+      flex: 1;
+      text-align: center;
+    }
+
+    .signature-line {
+      border-top: 1px solid #333;
+      margin-top: 30px;
+      font-size: 12px;
+    }
+
+    .print-button {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .print-button button {
+      padding: 10px 20px;
+      font-size: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .print-button button:hover {
+      background-color: #0056b3;
+    }
+
+    @media print {
+      body {
+        background-color: white;
+        padding: 0;
+      }
+
+      .receipt-container {
+        box-shadow: none;
+        max-width: 100%;
+      }
+
+      .print-button {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-container">
+    <div class="receipt-header">
+      <h1>HOUSE RENT & AMENITIES RECEIPT</h1>
+      <p>Payment Receipt</p>
+    </div>
+
+    <div class="receipt-number">Receipt #: <span id="receiptNumber"></span></div>
+
+    <div class="occupant-info">
+      <div class="info-block">
+        <div class="info-block-label">HOUSE NUMBER</div>
+        <div class="info-block-value" id="houseNumber"></div>
+      </div>
+      <div class="info-block">
+        <div class="info-block-label">DATE</div>
+        <div class="info-block-value" id="receiptDate"></div>
+      </div>
+      <div class="info-block">
+        <div class="info-block-label">OCCUPANT NAME</div>
+        <div class="info-block-value" id="occupantName"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">CHARGES BREAKDOWN</div>
+      <table class="charges-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th class="text-right">Amount (KES)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Rent</td>
+            <td class="text-right" id="rentAmount"></td>
+          </tr>
+          <tr>
+            <td>Guard Fee</td>
+            <td class="text-right" id="guardFeeAmount"></td>
+          </tr>
+          <tr>
+            <td>Garbage Fee</td>
+            <td class="text-right" id="garbageFeeAmount"></td>
+          </tr>
+          <tr>
+            <td>Water Consumption</td>
+            <td class="text-right" id="waterAmount"></td>
+          </tr>
+          <tr style="background-color: #f9f9f9; font-weight: bold;">
+            <td>TOTAL</td>
+            <td class="text-right" id="totalAmount"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">WATER CONSUMPTION DETAILS</div>
+      <div class="info-row">
+        <span class="info-label">Previous Reading:</span>
+        <span class="info-value" id="waterPrevious"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Current Reading:</span>
+        <span class="info-value" id="waterCurrent"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Units Consumed:</span>
+        <span class="info-value" id="waterUnits"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Rate per Unit:</span>
+        <span class="info-value" id="waterRate"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Water Amount:</span>
+        <span class="info-value" id="waterAmountDetail"></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">PAYMENT INFORMATION</div>
+      <div class="info-row">
+        <span class="info-label">Total Received:</span>
+        <span class="info-value" id="paymentTotal"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Mode of Payment:</span>
+        <span class="info-value" id="paymentMode"></span>
+      </div>
+      <div class="info-row" id="transactionRow" style="display: none;">
+        <span class="info-label">Transaction ID:</span>
+        <span class="info-value" id="transactionId"></span>
+      </div>
+      <div class="info-row" id="transactionDateRow" style="display: none;">
+        <span class="info-label">Transaction Date:</span>
+        <span class="info-value" id="transactionDate"></span>
+      </div>
+    </div>
+
+    <div class="signature-section">
+      <div class="signature-block">
+        <div class="signature-line">Cashier Signature</div>
+      </div>
+      <div class="signature-block">
+        <div class="signature-line">Tenant Signature</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Thank you for your payment. Please keep this receipt for your records.</p>
+      <p id="printDate"></p>
+    </div>
+
+    <div class="print-button">
+      <button onclick="window.print()">Print Receipt</button>
+    </div>
+  </div>
+
+  <script>
+    function populateReceipt(receipt) {
+      // Header info
+      document.getElementById('receiptNumber').textContent = receipt.receiptNumber;
+      document.getElementById('houseNumber').textContent = receipt.houseNumber;
+      document.getElementById('occupantName').textContent = receipt.occupantName;
+
+      const receiptDate = new Date(receipt.date);
+      document.getElementById('receiptDate').textContent = receiptDate.toLocaleDateString();
+
+      // Charges
+      document.getElementById('rentAmount').textContent = receipt.rent.amount.toFixed(2);
+      document.getElementById('guardFeeAmount').textContent = receipt.guardFee.toFixed(2);
+      document.getElementById('garbageFeeAmount').textContent = receipt.garbageFee.toFixed(2);
+      document.getElementById('waterAmount').textContent = receipt.water.amount.toFixed(2);
+
+      const total =
+        receipt.rent.amount +
+        receipt.guardFee +
+        receipt.garbageFee +
+        receipt.water.amount;
+      document.getElementById('totalAmount').textContent = total.toFixed(2);
+
+      // Water details
+      document.getElementById('waterPrevious').textContent = receipt.water.previousReading;
+      document.getElementById('waterCurrent').textContent = receipt.water.currentReading;
+      document.getElementById('waterUnits').textContent = receipt.water.unitsConsumed;
+      document.getElementById('waterRate').textContent = receipt.water.rate.toFixed(2);
+      document.getElementById('waterAmountDetail').textContent = receipt.water.amount.toFixed(2);
+
+      // Payment info
+      document.getElementById('paymentTotal').textContent = receipt.payment.totalReceived.toFixed(2);
+      const paymentMode = receipt.payment.mode.charAt(0).toUpperCase() + receipt.payment.mode.slice(1);
+      document.getElementById('paymentMode').textContent = paymentMode;
+
+      // Show transaction details if applicable
+      if (receipt.payment.mode === 'mpesa' || receipt.payment.mode === 'bank') {
+        document.getElementById('transactionRow').style.display = 'flex';
+        document.getElementById('transactionDateRow').style.display = 'flex';
+        document.getElementById('transactionId').textContent = receipt.payment.transactionId;
+        const transDate = new Date(receipt.payment.transactionDate);
+        document.getElementById('transactionDate').textContent = transDate.toLocaleDateString();
+      }
+
+      // Print date
+      const now = new Date();
+      document.getElementById('printDate').textContent =
+        'Printed on: ' + now.toLocaleString();
+    }
+
+    // Fetch receipt data from URL parameter or localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const receiptId = urlParams.get('id');
+
+    if (receiptId) {
+      fetch(`/api/receipts/${receiptId}`)
+        .then((response) => response.json())
+        .then((receipt) => populateReceipt(receipt))
+        .catch((error) => console.error('Error fetching receipt:', error));
+    } else if (sessionStorage.getItem('receiptData')) {
+      const receipt = JSON.parse(sessionStorage.getItem('receiptData'));
+      populateReceipt(receipt);
+      sessionStorage.removeItem('receiptData');
+    }
+  </script>
+</body>
+</html>

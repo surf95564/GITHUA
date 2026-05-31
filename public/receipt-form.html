@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Receipt</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-header h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .form-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      background-color: #f9f9f9;
+      padding: 10px 15px;
+      border-left: 4px solid #667eea;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .info-display {
+      background-color: #f0f8ff;
+      padding: 15px;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .info-value {
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .calculation-box {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    .calculation-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .calculation-row.total {
+      border-bottom: 2px solid #333;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 10px;
+      padding: 10px 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    .btn-submit {
+      background-color: #667eea;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background-color: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-reset {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-reset:hover {
+      background-color: #d0d0d0;
+    }
+
+    .required {
+      color: red;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-header">
+      <h1>Generate House Rent Receipt</h1>
+      <p>Fill in the details below to generate and print a receipt</p>
+    </div>
+
+    <form id="receiptForm">
+      <!-- Occupant Information -->
+      <div class="form-section">
+        <div class="section-title">Occupant Information</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="houseNumber">House Number <span class="required">*</span></label>
+            <select id="houseNumber" name="houseNumber" required>
+              <option value="">-- Select House --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="occupantName">Occupant Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="occupantName"
+              name="occupantName"
+              placeholder="Enter tenant name"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Rent and Fees -->
+      <div class="form-section">
+        <div class="section-title">Charges</div>
+
+        <div class="info-display">
+          <div class="info-row">
+            <span class="info-label">Rent Amount:</span>
+            <span class="info-value" id="rentDisplay">0.00</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="guardFee">Guard Fee <span class="required">*</span></label>
+            <select id="guardFee" name="guardFee" required>
+              <option value="">-- Select Guard Fee --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="garbageFee">Garbage Fee <span class="required">*</span></label>
+            <select id="garbageFee" name="garbageFee" required>
+              <option value="">-- Select Garbage Fee --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Water Consumption -->
+      <div class="form-section">
+        <div class="section-title">Water Consumption</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="waterPrevious">Previous Reading <span class="required">*</span></label>
+            <input type="number" id="waterPrevious" name="waterPrevious" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label for="waterCurrent">Current Reading <span class="required">*</span></label>
+            <input type="number" id="waterCurrent" name="waterCurrent" step="0.01" required />
+          </div>
+        </div>
+
+        <div class="calculation-box">
+          <div class="calculation-row">
+            <span>Units Consumed:</span>
+            <span id="waterUnits">0.00</span>
+          </div>
+          <div class="calculation-row">
+            <span>Water Amount:</span>
+            <span id="waterAmountDisplay">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Information -->
+      <div class="form-section">
+        <div class="section-title">Payment Information</div>
+
+        <div class="form-group">
+          <label for="paymentMode">Mode of Payment <span class="required">*</span></label>
+          <select id="paymentMode" name="paymentMode" required>
+            <option value="">-- Select Payment Mode --</option>
+            <option value="cash">Cash</option>
+            <option value="mpesa">M-Pesa</option>
+            <option value="bank">Bank Transfer</option>
+          </select>
+        </div>
+
+        <div id="transactionFields" class="hidden">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="transactionId">Transaction ID</label>
+              <input type="text" id="transactionId" name="transactionId" placeholder="Enter transaction ID" />
+            </div>
+            <div class="form-group">
+              <label for="transactionDate">Transaction Date</label>
+              <input type="date" id="transactionDate" name="transactionDate" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="form-section">
+        <div class="calculation-box">
+          <div class="calculation-row">
+            <span>Rent:</span>
+            <span id="rentTotal">0.00</span>
+          </div>
+          <div class="calculation-row">
+            <span>Guard Fee:</span>
+            <span id="guardTotal">0.00</span>
+          </div>
+          <div class="calculation-row">
+            <span>Garbage Fee:</span>
+            <span id="garbageTotal">0.00</span>
+          </div>
+          <div class="calculation-row">
+            <span>Water:</span>
+            <span id="waterTotal">0.00</span>
+          </div>
+          <div class="calculation-row total">
+            <span>TOTAL AMOUNT:</span>
+            <span id="totalDisplay">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-group">
+        <button type="submit" class="btn-submit">Generate & Print Receipt</button>
+        <button type="reset" class="btn-reset">Clear Form</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="/js/receipt-form.js"></script>
+</body>
+</html>
